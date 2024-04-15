@@ -7,7 +7,6 @@ import LoginScreen from "./components/LoginScreen";
 import SubscribeScreen from "./components/SubscribeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
 
