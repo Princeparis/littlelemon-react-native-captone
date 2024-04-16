@@ -1,30 +1,57 @@
-import { View, StyleSheet } from "react-native";
-import LittleLemonHeader from "./components/LittleLemonHeader";
-import LittleLemonFooter from "./components/LittleLemonFooter";
-import MenuScreen from "./components/Menu";
-import WelcomeScreen from "./screens/WelcomeScreen";
-import LoginScreen from "./components/LoginScreen";
-import SubscribeScreen from "./components/SubscribeScreen";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useState, useEffect, useContext } from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import OnboardingScreen from "./screens/Onboarding";
+import ProfileScreen from "./screens/Profile";
+import HomeScreen from "./screens/Home";
+import { isOnboardingCompleted } from "./utils/State";
+import { LogBox } from "react-native";
+import { MenuProvider } from "./utils/MenuProvider";
+import LogoTitle from "./components/logoTitle";
+import HeaderRightButton from "./components/headerRightButton";
+
+LogBox.ignoreLogs(["new NativeEventEmitter"]);
+
+import { ActivityIndicator } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      console.log("H: " + (await isOnboardingCompleted()));
+      setOnboardingCompleted(await isOnboardingCompleted());
+      setIsLoading(false);
+    })();
+  }, []);
+
+  if (isLoading) {
+    return <ActivityIndicator />; // Or some other loading indicator
+  }
+
   return (
     <NavigationContainer>
-      <View style={styles.container}>
-        <LittleLemonHeader />
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Menu" component={MenuScreen} />
-          <Stack.Screen name="Subscribe" component={SubscribeScreen} />
+      <MenuProvider>
+        <Stack.Navigator
+          initialRouteName={onboardingCompleted ? "Home" : "Welcome"}
+          screenOptions={{
+            headerRight: () => <HeaderRightButton />,
+            headerTitle: () => <LogoTitle />,
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Welcome"
+            component={OnboardingScreen}
+            options={{ headerRight: null }}
+          />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
-      </View>
-      <View style={styles.footerContainer}>
-        <LittleLemonFooter />
-      </View>
+      </MenuProvider>
     </NavigationContainer>
   );
 }
@@ -32,7 +59,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#495E57",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  footerContainer: { backgroundColor: "#333333" },
 });
