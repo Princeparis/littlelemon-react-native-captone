@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import LittleLemonHeader from "./components/LittleLemonHeader";
 import LittleLemonFooter from "./components/LittleLemonFooter";
 import MenuScreen from "./components/Menu";
-import WelcomeScreen from "./components/WelcomeScreen";
+import WelcomeScreen from "./screens/WelcomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import SubscribeScreen from "./components/SubscribeScreen";
 import { NavigationContainer } from "@react-navigation/native";
